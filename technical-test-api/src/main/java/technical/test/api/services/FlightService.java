@@ -3,6 +3,7 @@ package technical.test.api.services;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 import technical.test.api.record.FlightRecord;
 import technical.test.api.repository.FlightRepository;
 
@@ -15,4 +16,7 @@ public class FlightService {
         return flightRepository.findAll();
     }
 
+    public Mono<FlightRecord> save(FlightRecord record) {
+        return flightRepository.save(record);
+    }
 }
