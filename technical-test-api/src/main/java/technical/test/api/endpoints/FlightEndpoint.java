@@ -7,12 +7,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import technical.test.api.facade.FlightFacade;
 import technical.test.api.representation.FlightRepresentation;
+import technical.test.api.representation.SearchCriteriaRepresentation;
 
 @RestController
 @RequestMapping("/flight")
@@ -21,6 +23,7 @@ public class FlightEndpoint {
     private final FlightFacade flightFacade;
 
     @GetMapping
+    @RequestMapping("/all")
     public Flux<FlightRepresentation> getAllFlights() {
         return flightFacade.getAllFlights();
     }
@@ -29,5 +32,20 @@ public class FlightEndpoint {
     @ResponseStatus(HttpStatus.CREATED)
     public Mono<FlightRepresentation> create(@RequestBody FlightRepresentation body) {
         return flightFacade.createFlight(body);
+    }
+
+    @GetMapping
+    public Flux<FlightRepresentation> getAllFlights(
+            @RequestParam(required = false) String originCountry,
+            @RequestParam(required = false) String destinationCountry,
+            @RequestParam(defaultValue = "price") String sortBy,
+            @RequestParam(defaultValue = "asc") String sortDir) {
+        SearchCriteriaRepresentation criteria = SearchCriteriaRepresentation.builder()
+                .originCountry(originCountry)
+                .destinationCountry(destinationCountry)
+                .sortBy(sortBy)
+                .sortDir(sortDir)
+                .build();
+        return flightFacade.searchFlights(criteria);
     }
 }

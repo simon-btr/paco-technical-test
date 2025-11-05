@@ -15,6 +15,7 @@ import technical.test.api.mapper.FlightMapper;
 import technical.test.api.record.AirportRecord;
 import technical.test.api.record.FlightRecord;
 import technical.test.api.representation.FlightRepresentation;
+import technical.test.api.representation.SearchCriteriaRepresentation;
 import technical.test.api.services.AirportService;
 import technical.test.api.services.FlightService;
 
@@ -65,4 +66,15 @@ public class FlightFacade {
                 });
     }
 
+    public Flux<FlightRepresentation> searchFlights(SearchCriteriaRepresentation criteria) {
+        return flightService.searchByCountries(criteria)
+                .flatMap(fr -> airportService.findByIataCode(fr.getOrigin())
+                        .zipWith(airportService.findByIataCode(fr.getDestination()))
+                        .map(t2 -> {
+                            FlightRepresentation rep = flightMapper.convert(fr);
+                            rep.setOrigin(airportMapper.convert(t2.getT1()));
+                            rep.setDestination(airportMapper.convert(t2.getT2()));
+                            return rep;
+                        }));
+    }
 }
