@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Administration — Créer un vol</title>
+    <style>
+      body {
+        font-family: system-ui, Arial, sans-serif;
+        background-color: #f0f7fc;
+        margin: 0;
+      }
+      header {
+        background-color: #3498db;
+        padding: 20px;
+        text-align: center;
+        color: #fff;
+      }
+      .container {
+        max-width: 760px;
+        margin: 40px auto;
+      }
+      .card {
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        padding: 20px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      }
+      .row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+      }
+      label {
+        display: block;
+        font-weight: 600;
+        margin-bottom: 6px;
+      }
+      input,
+      button {
+        width: 100%;
+        padding: 10px 12px;
+        border-radius: 8px;
+        border: 1px solid #d1d5db;
+      }
+      input:focus {
+        outline: none;
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+      }
+      button {
+        background: #2563eb;
+        color: #fff;
+        border: none;
+        font-weight: 600;
+        cursor: pointer;
+        margin-top: 12px;
+        width: auto;
+      }
+      button:hover {
+        background: #1d4ed8;
+      }
+      .alert {
+        margin-top: 16px;
+        padding: 12px;
+        border-radius: 8px;
+      }
+      .alert-success {
+        background: #ecfdf5;
+        border: 1px solid #10b981;
+        color: #065f46;
+      }
+      .alert-error {
+        background: #fef2f2;
+        border: 1px solid #ef4444;
+        color: #991b1b;
+      }
+      .muted {
+        color: #6b7280;
+        font-size: 0.9rem;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Créer un vol</h1>
+    </header>
+
+    <section class="container">
+      <div th:if="${success}" style="color: green;">
+        Vol créé — ID : <span th:text="${created.id}"></span>
+    </div>
+    <div th:if="${error}" style="color: red;">
+        <span th:text="${error}"></span>
+    </div>
+    <p>
+    <a th:href="@{/}">
+        <button type="button">Retour à la liste des vols</button>
+    </a>
+    </p>
+    <form id="flightForm" th:action="@{/admin/flight}" th:object="${createFlightForm}" method="post">
+        <div>
+            <label for="departure">Départ :</label>
+            <input id="departure" th:field="*{departure}" type="datetime-local" step="60" required/>
+        </div>
+        <div>
+            <label for="arrival">Arrivée :</label>
+            <input id="arrival" th:field="*{arrival}" type="datetime-local" step="60" required/>
+        </div>
+        <div>
+            <label for="price">Prix (€) :</label>
+            <input id="price" th:field="*{price}" type="text" placeholder="199.99" required/>
+        </div>
+        <div>
+            <label for="originIata">Origine (IATA) :</label>
+            <input id="originIata" th:field="*{originIata}" type="text" maxlength="3" placeholder="CDG" required/>
+        </div>
+        <div>
+            <label for="destinationIata">Destination (IATA) :</label>
+            <input id="destinationIata" th:field="*{destinationIata}" type="text" maxlength="3" placeholder="LHR" required/>
+        </div>
+        <div>
+            <label for="image">URL image :</label>
+            <input id="image" th:field="*{image}" type="url" placeholder="https://exemple.com/image.jpg"/>
+        </div>
+        <div>
+            <button type="submit">Créer le vol</button>
+        </div>
+    </form>
+</section>
+  </body>
+</html>

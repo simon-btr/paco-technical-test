@@ -1,12 +1,12 @@
 package technical.test.renderer.clients;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
+
+import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import technical.test.renderer.properties.TechnicalApiProperties;
-import technical.test.renderer.viewmodels.AirportViewModel;
 import technical.test.renderer.viewmodels.FlightViewModel;
 
 @Component
@@ -27,5 +27,14 @@ public class TechnicalApiClient {
                 .uri(technicalApiProperties.getUrl() + technicalApiProperties.getFlightPath())
                 .retrieve()
                 .bodyToFlux(FlightViewModel.class);
+    }
+    
+    public Mono<FlightViewModel> createFlight(FlightViewModel payload) {
+        return webClient
+                .post()
+                .uri(technicalApiProperties.getUrl() + technicalApiProperties.getFlightPath())
+                .bodyValue(payload)
+                .retrieve()
+                .bodyToMono(FlightViewModel.class);
     }
 }
