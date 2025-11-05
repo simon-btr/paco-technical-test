@@ -83,6 +83,27 @@
         <button type="button">Créer un vol (Espace Admin)</button>
     </a>
     </p>
+    <form th:action="@{/}" method="get" th:object="${filterForm}">
+        <label>Origine (pays) :</label>
+        <input type="text" th:field="*{originCountry}" placeholder="France"/>
+
+        <label>Destination (pays) :</label>
+        <input type="text" th:field="*{destinationCountry}" placeholder="US"/>
+
+        <label>Trier par :</label>
+        <select th:field="*{sortBy}">
+            <option value="price">Prix</option>
+            <option value="departure">Départ</option>
+            <option value="arrival">Arrivée</option>
+        </select>
+
+        <select th:field="*{sortDir}">
+            <option value="asc">Ascendant</option>
+            <option value="desc">Descendant</option>
+        </select>
+
+        <button type="submit">Filtrer</button>
+    </form>
     <ul>
         <table>
             <tr>

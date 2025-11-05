@@ -1,5 +1,7 @@
 package technical.test.renderer.clients;
 
+import java.util.Optional;
+
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -18,17 +20,27 @@ public class TechnicalApiClient {
 
     public TechnicalApiClient(TechnicalApiProperties technicalApiProperties, final WebClient.Builder webClientBuilder) {
         this.technicalApiProperties = technicalApiProperties;
-        this.webClient = webClientBuilder.build();
+        this.webClient = webClientBuilder.
+            baseUrl(technicalApiProperties.getUrl()).
+            build();
     }
 
-    public Flux<FlightViewModel> getFlights() {
-        return webClient
-                .get()
-                .uri(technicalApiProperties.getUrl() + technicalApiProperties.getFlightPath())
+    public Flux<FlightViewModel> getFlights(String originCountry,
+            String destinationCountry,
+            String sortBy,
+            String sortDir) {
+        return webClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path(technicalApiProperties.getFlightPath())
+                        .queryParamIfPresent("originCountry", Optional.ofNullable(originCountry))
+                        .queryParamIfPresent("destinationCountry", Optional.ofNullable(destinationCountry))
+                        .queryParam("sortBy", sortBy)
+                        .queryParam("sortDir", sortDir)
+                        .build())
                 .retrieve()
                 .bodyToFlux(FlightViewModel.class);
     }
-    
+
     public Mono<FlightViewModel> createFlight(FlightViewModel payload) {
         return webClient
                 .post()

@@ -14,6 +14,7 @@ import reactor.core.publisher.Mono;
 import technical.test.renderer.facades.FlightFacade;
 import technical.test.renderer.viewmodels.AirportViewModel;
 import technical.test.renderer.viewmodels.CreateFlightForm;
+import technical.test.renderer.viewmodels.FlightFilterForm;
 import technical.test.renderer.viewmodels.FlightViewModel;
 
 @Controller
@@ -26,9 +27,16 @@ public class TechnicalController {
     private FlightFacade flightFacade;
 
     @GetMapping
-    public Mono<String> getMarketPlaceReturnCouponPage(final Model model) {
-        model.addAttribute("flights", this.flightFacade.getFlights());
-        System.out.println("Rendering index page...");
+    public Mono<String> getMarketPlaceReturnCouponPage(
+            @ModelAttribute("filterForm") FlightFilterForm filterForm,
+            Model model) {
+        model.addAttribute("filterForm", filterForm);
+        model.addAttribute("flights", this.flightFacade.getFlights(
+            filterForm.getOriginCountry(),
+            filterForm.getDestinationCountry(),
+            filterForm.getSortBy(),
+            filterForm.getSortDir()
+        ));
         return Mono.just("pages/index");
     }
 
@@ -42,7 +50,6 @@ public class TechnicalController {
     public Mono<String> adminCreate(
             @ModelAttribute("createFlightForm") CreateFlightForm form,
             Model model) {
-        log.info("Form soumis : {}", form);
         try {
             double parsedPrice = Double.parseDouble(form.getPrice().trim().replace(',', '.'));
             String oIata = form.getOriginIata().trim().toUpperCase();
