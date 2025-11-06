@@ -77,4 +77,8 @@ public class FlightFacade {
                             return rep;
                         }));
     }
+
+    public Mono<FlightRepresentation> getFlightById(UUID id) {
+        return flightService.getFlightById(id);
+    }
 }

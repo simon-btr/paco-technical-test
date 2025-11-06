@@ -1,5 +1,7 @@
 package technical.test.renderer.facades;
 
+import java.util.UUID;
+
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -16,13 +18,17 @@ public class FlightFacade {
     }
 
     public Flux<FlightViewModel> getFlights(String originCountry,
-                                            String destinationCountry,
-                                            String sortBy,
-                                            String sortDir) {
+            String destinationCountry,
+            String sortBy,
+            String sortDir) {
         return flightService.getFlights(originCountry, destinationCountry, sortBy, sortDir);
     }
 
     public Mono<FlightViewModel> createFlight(FlightViewModel flightViewModel) {
         return this.flightService.createFlight(flightViewModel);
+    }
+
+    public Mono<FlightViewModel> getFlightById(UUID id) {
+        return flightService.getFlightById(id);
     }
 }

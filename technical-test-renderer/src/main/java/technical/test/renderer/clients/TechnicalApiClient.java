@@ -1,6 +1,7 @@
 package technical.test.renderer.clients;
 
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -20,9 +21,7 @@ public class TechnicalApiClient {
 
     public TechnicalApiClient(TechnicalApiProperties technicalApiProperties, final WebClient.Builder webClientBuilder) {
         this.technicalApiProperties = technicalApiProperties;
-        this.webClient = webClientBuilder.
-            baseUrl(technicalApiProperties.getUrl()).
-            build();
+        this.webClient = webClientBuilder.baseUrl(technicalApiProperties.getUrl()).build();
     }
 
     public Flux<FlightViewModel> getFlights(String originCountry,
@@ -46,6 +45,15 @@ public class TechnicalApiClient {
                 .post()
                 .uri(technicalApiProperties.getUrl() + technicalApiProperties.getFlightPath())
                 .bodyValue(payload)
+                .retrieve()
+                .bodyToMono(FlightViewModel.class);
+    }
+
+    public Mono<FlightViewModel> getFlightById(UUID id) {
+        return webClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path(technicalApiProperties.getFlightPath() + "/{id}")
+                        .build(id))
                 .retrieve()
                 .bodyToMono(FlightViewModel.class);
     }

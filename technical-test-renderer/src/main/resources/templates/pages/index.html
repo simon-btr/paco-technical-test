@@ -85,21 +85,21 @@
     </p>
     <form th:action="@{/}" method="get" th:object="${filterForm}">
         <label>Origine (pays) :</label>
-        <input type="text" th:field="*{originCountry}" placeholder="France"/>
+        <input type="text" th:field="*{originCountry}" th:value="${filterForm.originCountry}" placeholder="France"/>
 
         <label>Destination (pays) :</label>
-        <input type="text" th:field="*{destinationCountry}" placeholder="US"/>
+        <input type="text" th:field="*{destinationCountry}" th:value="${filterForm.destinationCountry}" placeholder="US"/>
 
         <label>Trier par :</label>
         <select th:field="*{sortBy}">
-            <option value="price">Prix</option>
-            <option value="departure">Départ</option>
-            <option value="arrival">Arrivée</option>
+            <option value="price" th:selected="${filterForm.sortBy == 'price'}">Prix</option>
+            <option value="departure" th:selected="${filterForm.sortBy == 'departure'}">Départ</option>
+            <option value="arrival" th:selected="${filterForm.sortBy == 'arrival'}">Arrivée</option>
         </select>
 
         <select th:field="*{sortDir}">
-            <option value="asc">Ascendant</option>
-            <option value="desc">Descendant</option>
+            <option value="asc" th:selected="${filterForm.sortDir == 'asc'}">Ascendant</option>
+            <option value="desc" th:selected="${filterForm.sortDir == 'desc'}">Descendant</option>
         </select>
 
         <button type="submit">Filtrer</button>
@@ -111,6 +111,7 @@
                 <th scope="col">Arrivée à</th>
                 <th scope="col">Prix</th>
                 <th scope="col">Photo</th>
+                <th scope="col">Détails</th>
             </tr>
             <tr th:each="flight : ${flights}">
                 <th th:text="${flight.origin.name}"></th>
@@ -124,6 +125,15 @@
                         alt="Photo du vol" 
                         width="120"
                     />
+                </th>
+                <th>
+                    <a th:href="@{/flightDetails(id=${flight.id}, 
+                                                originCountry=${filterForm.originCountry}, 
+                                                destinationCountry=${filterForm.destinationCountry}, 
+                                                sortBy=${filterForm.sortBy}, 
+                                                sortDir=${filterForm.sortDir})}">
+                        Voir détail
+                    </a>
                 </th>
             </tr>
         </table>

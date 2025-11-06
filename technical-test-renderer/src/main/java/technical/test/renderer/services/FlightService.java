@@ -1,5 +1,7 @@
 package technical.test.renderer.services;
 
+import java.util.UUID;
+
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -23,5 +25,9 @@ public class FlightService {
 
     public Mono<FlightViewModel> createFlight(FlightViewModel flightViewModel) {
         return this.technicalApiClient.createFlight(flightViewModel);
+    }
+
+    public Mono<FlightViewModel> getFlightById(UUID id) {
+        return technicalApiClient.getFlightById(id);
     }
 }

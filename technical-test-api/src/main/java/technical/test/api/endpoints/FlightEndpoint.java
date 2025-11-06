@@ -2,14 +2,19 @@ package technical.test.api.endpoints;
 
 import lombok.RequiredArgsConstructor;
 
+import java.util.UUID;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
+
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import technical.test.api.facade.FlightFacade;
@@ -47,5 +52,12 @@ public class FlightEndpoint {
                 .sortDir(sortDir)
                 .build();
         return flightFacade.searchFlights(criteria);
+    }
+
+    @GetMapping("/{id}")
+    public Mono<FlightRepresentation> getFlightById(@PathVariable("id") UUID id) {
+        return flightFacade.getFlightById(id)
+                .switchIfEmpty(Mono.error(new ResponseStatusException(HttpStatus.NOT_FOUND,
+                        "Flight not found for ID " + id)));
     }
 }

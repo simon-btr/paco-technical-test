@@ -1,5 +1,7 @@
 package technical.test.renderer.controllers;
 
+import java.util.UUID;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -7,6 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,11 +35,10 @@ public class TechnicalController {
             Model model) {
         model.addAttribute("filterForm", filterForm);
         model.addAttribute("flights", this.flightFacade.getFlights(
-            filterForm.getOriginCountry(),
-            filterForm.getDestinationCountry(),
-            filterForm.getSortBy(),
-            filterForm.getSortDir()
-        ));
+                filterForm.getOriginCountry(),
+                filterForm.getDestinationCountry(),
+                filterForm.getSortBy(),
+                filterForm.getSortDir()));
         return Mono.just("pages/index");
     }
 
@@ -84,4 +86,19 @@ public class TechnicalController {
             return Mono.just("pages/admin");
         }
     }
+
+    @GetMapping("/flightDetails")
+    public Mono<String> showFlightDetails(
+            @RequestParam("id") UUID id,
+            @ModelAttribute("filterForm") FlightFilterForm filterForm,
+            Model model) {
+        return flightFacade.getFlightById(id)
+                .map(flightViewModel -> {
+                    model.addAttribute("flight", flightViewModel);
+                    model.addAttribute("filterForm", filterForm);
+                    return "pages/details";
+                })
+                .defaultIfEmpty("pages/details");
+    }
+
 }
